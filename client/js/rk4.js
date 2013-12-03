@@ -52,9 +52,9 @@
 
     _scaleArray: function(array, scale) {
       var out = [];
-      for (var val in array) {
+      _.each(array, function(val) {
         out.push(val * scale);
-      }
+      });
       return out;
     }
   };
