@@ -24,9 +24,10 @@ Meteor.startup(function() {
 
         if(positionAvailable) {
             var pos = PositionEstimator.getPosition();
-            Session.set("x", pos[0]);
-            Session.set("y", pos[1]);
-            Session.set("z", pos[2]);
+
+            $("#console-x").text(pos[0]);
+            $("#console-y").text(pos[1]);
+            $("#console-z").text(pos[2]);
 
             if((lastPosition[0] !== pos[0]) || (lastPosition[1] !== pos[1]) || (lastPosition[2] !== pos[2])) {
                 lastPosition = pos;
@@ -63,7 +64,7 @@ Meteor.startup(function() {
 
 
         // set up renderer
-        renderer = new THREE.WebGLRenderer();
+        renderer = new THREE.CanvasRenderer();
         renderer.setSize( window.innerWidth, window.innerHeight );
 
         document.getElementById("viewer").appendChild( renderer.domElement );
@@ -115,19 +116,6 @@ Meteor.startup(function() {
             renderNeeded = false;
         }
     }
-
-    // show position in console
-    _.extend(Template.console, {
-        x: function() {
-            return Session.get("x");
-        },
-        y: function() {
-            return Session.get("y");
-        },
-        z: function() {
-            return Session.get("z");
-        }
-    });
 
     init();
     main();

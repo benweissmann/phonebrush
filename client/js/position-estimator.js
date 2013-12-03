@@ -17,8 +17,9 @@
   var accelsToSample = 1;
 
   exports.PositionEstimator = {
-    // Returns true iff position estimates are available (e.g. we're on a phone)
+    // Returns true iff position estimates are available (e.g. we're on a phone)oo
     isAvailable: function() {
+      return true;
       return (gyro.getFeatures().indexOf('devicemotion') != -1) || (gyro.getFeatures().indexOf('MozOrientation') != -1);
     },
 
