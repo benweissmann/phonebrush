@@ -6,10 +6,15 @@
     vel: [0, 0, 0]
   };
   var sampledAccel = [];
-  var accelsToSample = 4;
   var startedGyro = false;
   var timestep = 200; // ms
   var lastAccel = [0, 0, 0];
+
+//  var integrator = RK4;
+//  var accelsToSample = 4;
+
+  var integrator = Euler;
+  var accelsToSample = 1;
 
   exports.PositionEstimator = {
     // Returns true iff position estimates are available (e.g. we're on a phone)
@@ -37,8 +42,7 @@
 
     _timestep: function() {
       if (sampledAccel.length >= accelsToSample) {
-        state = RK4.takeStep(state, sampledAccel, timestep / 1000);
-
+        state = integrator.takeStep(state, sampledAccel, timestep / 1000);
       }
 
       window.setTimeout(PositionEstimator._timestep, timestep);
