@@ -7,7 +7,8 @@
   };
   var sampledAccel = [];
   var startedGyro = false;
-  var timestep = 250; // ms 
+  var timestep = 150; // ms 
+  var lastAccel = [0, 0, 0];
 
   exports.PositionEstimator = {
     // Returns true iff position estimates are available (e.g. we're on a phone)
@@ -54,16 +55,15 @@
     },
 
     _handleGyroUpdate: function(event) {
-      var lastAccel = [0, 0, 0];
       if (sampledAccel.length > 0) {
-        lastAccel = sampledAccel[sampledAccel.length - 1];
+        sampledAccel.push([event.x - lastAccel[0], event.y - lastAccel[1], event.z - lastAccel[2]]);
+      } else {
+        sampledAccel.push([event.x, event.y, event.z]);
       }
-      sampledAccel.push([lastAccel[0] - event.x, lastAccel[1] - event.y, lastAccel[2] - event.z]);
+      lastAccel = [event.x, event.y, event.z];
       if (sampledAccel.length > 4) {
         sampledAccel.shift();
       }
     }
   };
-
-
 })(this);
