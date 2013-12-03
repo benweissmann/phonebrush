@@ -24,10 +24,18 @@ Meteor.startup(function() {
 
         if(positionAvailable) {
             var pos = PositionEstimator.getPosition();
+            var vel = PositionEstimator.getVelocity();
+            var accel = PositionEstimator.getAcceleration();
 
             $("#console-x").text(pos[0]);
             $("#console-y").text(pos[1]);
             $("#console-z").text(pos[2]);
+            $("#console-x-vel").text(vel[0]);
+            $("#console-y-vel").text(vel[1]);
+            $("#console-z-vel").text(vel[2]);
+            $("#console-x-accel").text(accel[0]);
+            $("#console-y-accel").text(accel[1]);
+            $("#console-z-accel").text(accel[2]);
 
             if((lastPosition[0] !== pos[0]) || (lastPosition[1] !== pos[1]) || (lastPosition[2] !== pos[2])) {
                 lastPosition = pos;

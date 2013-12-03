@@ -26,13 +26,29 @@
     // Returns the current estimate of [x, y, z] relative to the first
     // time getPosition was called.
     getPosition: function() {
-      if (!startedGyro) {
-        this._startGyro();
-      }
+      this._startGyro();
       return state.pos;
     },
 
+    getVelocity: function() {
+      this._startGyro();
+      return state.vel;
+    },
+
+    // Returns the last acceleration sampled, relative to the sample taken before it.
+    getAcceleration: function() {
+      this._startGyro();
+      if (sampledAccel.length == 0) {
+        return [0, 0, 0];
+      }
+      return sampledAccel[sampledAccel.length - 1];
+    },
+
     _startGyro: function() {
+      if (startedGyro) {
+        return;
+      }
+
       startedGyro = true;
       gyro.frequency = timestep / accelsToSample; // The RK4 integrator needs 4 samples for each step, so we'll divide the time step.
       gyro.calibrate();
