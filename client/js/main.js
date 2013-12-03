@@ -35,9 +35,9 @@ Meteor.startup(function() {
                 console.log("inserting");
                 Points.insert({
                     line: myLineId,
-                    x: pos[0],
-                    y: pos[1],
-                    z: pos[2],
+                    x: pos[0]*500,
+                    y: pos[1]*500,
+                    z: pos[2]*500,
                     order: nextPointOrder
                 });
 
