@@ -6,8 +6,9 @@
     vel: [0, 0, 0]
   };
   var sampledAccel = [];
+  var accelsToSample = 4;
   var startedGyro = false;
-  var timestep = 150; // ms 
+  var timestep = 200; // ms 
   var lastAccel = [0, 0, 0];
 
   exports.PositionEstimator = {
@@ -27,7 +28,7 @@
 
     _startGyro: function() {
       startedGyro = true;
-      gyro.frequency = timestep / 4; // We need 4 acceleration values for each time step, so we'll sample the gyro 4 times as frequently
+      gyro.frequency = timestep / accelsToSample; // The RK4 integrator needs 4 samples for each step, so we'll divide the time step.
       gyro.calibrate();
       gyro.startTracking(this._handleGyroUpdate);
 
@@ -35,7 +36,7 @@
     },
 
     _timestep: function() {
-      if (sampledAccel.length >= 4) {
+      if (sampledAccel.length >= accelsToSample) {
         state = RK4.takeStep(state, sampledAccel, timestep / 1000);
 
         $('#x').text(state.pos[0]);
@@ -61,7 +62,7 @@
         sampledAccel.push([event.x, event.y, event.z]);
       }
       lastAccel = [event.x, event.y, event.z];
-      if (sampledAccel.length > 4) {
+      if (sampledAccel.length > accelsToSample) {
         sampledAccel.shift();
       }
     }
