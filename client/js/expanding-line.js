@@ -72,9 +72,6 @@
             geometry.vertices[++bufferEnd] = prevVertex;
             geometry.vertices[++bufferEnd] = vertex;
 
-            console.log(bufferEnd);
-            console.log(geometry.vertices);
-
             geometry.verticesNeedUpdate = true;
         };
 
