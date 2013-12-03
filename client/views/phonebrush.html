@@ -3,14 +3,20 @@
 </head>
 
 <body>
-X: <div id='x'></div>
-Y: <div id='y'></div>
-Z: <div id='z'></div>
-X-vel: <div id='x-vel'></div>
-Y-vel: <div id='y-vel'></div>
-Z-vel: <div id='z-vel'></div>
-X-accel: <div id='x-accel'></div>
-Y-accel: <div id='y-accel'></div>
-Z-accel: <div id='z-accel'></div>
+{{> console}}
+{{> viewer}}
 </body>
 
+<template name="console">
+    <div>
+        <p>X: {{x}}</p>
+        <p>Y: {{y}}</p>
+        <p>Z: {{z}}</p>
+    </div>
+</template>
+
+<template name="viewer">
+    {{#constant}}
+        <div id="viewer"></div>
+    {{/constant}}
+</template>

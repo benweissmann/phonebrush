@@ -27,7 +27,13 @@
         "Deps": true,
         "check": true,
         "Handlebars": true,
-        "Package": true
+        "Package": true,
+        "PositionEstimator": true,
+        "THREE": true,
+        "Points": true,
+        "Lines": true,
+        "ExpandingLine": true,
+        "RandomColor": true
     },
     "newcap": false,
     "multistr": true

@@ -8,7 +8,7 @@
   var sampledAccel = [];
   var accelsToSample = 4;
   var startedGyro = false;
-  var timestep = 200; // ms 
+  var timestep = 200; // ms
   var lastAccel = [0, 0, 0];
 
   exports.PositionEstimator = {
@@ -32,27 +32,16 @@
       gyro.calibrate();
       gyro.startTracking(this._handleGyroUpdate);
 
-      window.setTimeout(this._timestep, timestep); 
+      window.setTimeout(this._timestep, timestep);
     },
 
     _timestep: function() {
       if (sampledAccel.length >= accelsToSample) {
         state = RK4.takeStep(state, sampledAccel, timestep / 1000);
 
-        $('#x').text(state.pos[0]);
-        $('#y').text(state.pos[1]);
-        $('#z').text(state.pos[2]);
-        $('#x-vel').text(state.vel[0]);
-        $('#y-vel').text(state.vel[1]);
-        $('#z-vel').text(state.vel[2]);
-        $('#x-accel').text(sampledAccel[3][0]);
-        $('#y-accel').text(sampledAccel[3][1]);
-        $('#z-accel').text(sampledAccel[3][2]);
-
-        console.log(state.pos);
       }
 
-      window.setTimeout(PositionEstimator._timestep, timestep); 
+      window.setTimeout(PositionEstimator._timestep, timestep);
     },
 
     _handleGyroUpdate: function(event) {
@@ -64,6 +53,16 @@
       lastAccel = [event.x, event.y, event.z];
       if (sampledAccel.length > accelsToSample) {
         sampledAccel.shift();
+      }
+    },
+
+    _override: function(x, y, z) {
+      PositionEstimator.getPosition = function() {
+        return [x, y, z];
+      }
+
+      PositionEstimator.isAvailable = function() {
+        return true;
       }
     }
   };
