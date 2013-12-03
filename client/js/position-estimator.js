@@ -40,6 +40,12 @@
         $('#x').text(state.pos[0]);
         $('#y').text(state.pos[1]);
         $('#z').text(state.pos[2]);
+        $('#x-vel').text(state.vel[0]);
+        $('#y-vel').text(state.vel[1]);
+        $('#z-vel').text(state.vel[2]);
+        $('#x-accel').text(sampledAccel[3][0]);
+        $('#y-accel').text(sampledAccel[3][1]);
+        $('#z-accel').text(sampledAccel[3][2]);
 
         console.log(state.pos);
       }
@@ -48,8 +54,11 @@
     },
 
     _handleGyroUpdate: function(event) {
-      sampledAccel.push([event.x, event.y, event.z]);
-      gyro.calibrate();
+      var lastAccel = [0, 0, 0];
+      if (sampledAccel.length > 0) {
+        lastAccel = sampledAccel[sampledAccel.length - 1];
+      }
+      sampledAccel.push([lastAccel[0] - event.x, lastAccel[1] - event.y, lastAccel[2] - event.z]);
       if (sampledAccel.length > 4) {
         sampledAccel.shift();
       }
