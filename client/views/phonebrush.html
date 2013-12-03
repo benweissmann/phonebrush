@@ -18,11 +18,13 @@
         <p>X acceleration: <span id="console-x-accel">0</span></p>
         <p>Y acceleration: <span id="console-y-accel">0</span></p>
         <p>Z acceleration: <span id="console-z-accel">0</span></p>
+        <p>Drawing?: <span id="console-drawing">false</span></p>
     </div>
 </template>
 
 <template name="viewer">
     {{#constant}}
         <div id="viewer"></div>
+        <button id="clear-btn">Clear</button>
     {{/constant}}
 </template>

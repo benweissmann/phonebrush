@@ -11,13 +11,8 @@ Meteor.startup(function() {
 
     var positionAvailable = PositionEstimator.isAvailable();
 
-    var myLineId;
+    var myLineId = null;
     var nextPointOrder = 0;
-    if(positionAvailable) {
-        myLineId = Lines.insert({
-            color: RandomColor()
-        });
-    }
 
     function main() {
         // get new position estimate
@@ -36,11 +31,17 @@ Meteor.startup(function() {
             $("#console-x-accel").text(accel[0]);
             $("#console-y-accel").text(accel[1]);
             $("#console-z-accel").text(accel[2]);
+            $("#console-drawing").text(THREE.touchIsDown);
 
-            if((lastPosition[0] !== pos[0]) || (lastPosition[1] !== pos[1]) || (lastPosition[2] !== pos[2])) {
+            if(THREE.touchIsDown && ((lastPosition[0] !== pos[0]) || (lastPosition[1] !== pos[1]) || (lastPosition[2] !== pos[2]))) {
                 lastPosition = pos;
 
-                console.log("inserting");
+                if(myLineId === null) {
+                    myLineId = Lines.insert({
+                        color: RandomColor()
+                    });
+                }
+
                 Points.insert({
                     line: myLineId,
                     x: pos[0]*500,
@@ -72,10 +73,20 @@ Meteor.startup(function() {
 
 
         // set up renderer
-        renderer = new THREE.CanvasRenderer();
+        if(window.WebGLRenderingContext) {
+            renderer = new THREE.WebGLRenderer();
+        }
+        else {
+            renderer = new THREE.CanvasRenderer();
+        }
         renderer.setSize( window.innerWidth, window.innerHeight );
+        renderer.setClearColorHex( 0x000000, 1 );
 
         document.getElementById("viewer").appendChild( renderer.domElement );
+
+        // axes
+        var axes = new THREE.AxisHelper( 100 );
+        scene.add( axes );
 
 
         // set up mouse controls
@@ -106,7 +117,15 @@ Meteor.startup(function() {
                 var line = lines[point.line];
 
                 if(!line) {
-                    line = ExpandingLine(scene, Lines.findOne(point.line).color);
+                    var width = 10;
+                    if(point.line === myLineId) {
+                        width = 25;
+                    }
+
+                    line = ExpandingLine(scene, {
+                        color: Lines.findOne(point.line).color
+                    });
+
                     lines[point.line] = line;
                 }
 
@@ -116,6 +135,24 @@ Meteor.startup(function() {
             }
         });
 
+        // clear button
+        $(function() {
+            $("#clear-btn").click(function() {
+                Lines.find().forEach(function(line) {
+                    Lines.remove({_id: line._id});
+                });
+
+                Points.find().forEach(function(point) {
+                    Points.remove({_id: point._id});
+                });
+
+                scene._objects.forEach(function(obj) {
+                    scene.remove(obj);
+                });
+
+                renderNeeded = true;
+            });
+        });
     }
 
     function update() {

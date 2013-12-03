@@ -4,24 +4,21 @@
 (function(exports) {
     "use strict";
 
-    exports.ExpandingLine = function(scene, color, initialSize) {
+    exports.ExpandingLine = function(scene, opts) {
         var self = {};
 
         var material, geometry, bufferSize, line, bufferEnd;
 
         function init() {
             // default arguments
-            if(color === undefined) {
-                color = 0x0000ff;
-            }
-
-            if(initialSize === undefined) {
-                initialSize = 128;
-            }
+            var color = opts.color || 0x0000ff;
+            var initialSize = opts.initialSize || 128;
+            var width = opts.width || 5;
 
             // material
             material = new THREE.LineBasicMaterial({
-                color: color
+                color: color,
+                linewidth: width
             });
 
             // init buffer

@@ -1,1 +1,11 @@
 /* CSS declarations go here */
+
+#clear-btn {
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    width: 100px;
+    height: 60px;
+    font-size: 30px;
+    font-weight: bold;
+}
