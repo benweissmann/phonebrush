@@ -4,7 +4,7 @@
   "use strict";
 
   exports.RK4 = {
-    takeStep: function(initialState, sampledAccel, timestep) {
+    takeStep: function(initialState, sampledAccel, timestep, dampingFactor) {
       var a = RK4._evaluate(initialState, 0, {dPos:[0,0,0], dVel:[0,0,0]}, sampledAccel[0]);
       var b = RK4._evaluate(initialState, 0.5 * timestep, a, sampledAccel[1]);
       var c = RK4._evaluate(initialState, 0.5 * timestep, b, sampledAccel[2]);
@@ -15,7 +15,7 @@
 
       return {
         pos: RK4._addArrays([initialState.pos, RK4._scaleArray(dPosDt, timestep)]),
-        vel: RK4._addArrays([initialState.vel, RK4._scaleArray(dVelDt, timestep)])
+        vel: RK4._addArrays([RK4._scalearray(initialState.vel, dampingFactor), RK4._scaleArray(dVelDt, timestep)])
       };
     },
 

@@ -9,6 +9,7 @@
   var startedGyro = false;
   var timestep = 200; // ms
   var lastAccel = [0, 0, 0];
+  var dampingFactor = 0.1; // Every step, we multiply the previous velocity by 1 - dampingFactor
 
 //  var integrator = RK4;
 //  var accelsToSample = 4;
@@ -68,7 +69,7 @@
       }
 
       if (sampledAccel.length >= accelsToSample) {
-        state = integrator.takeStep(state, sampledAccel, timestep / 1000);
+        state = integrator.takeStep(state, sampledAccel, timestep / 1000, dampingFactor);
       }
     },
 
