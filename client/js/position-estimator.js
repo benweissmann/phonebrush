@@ -9,14 +9,10 @@
   var startedGyro = false;
   var dampingFactor = 0.02; // Every step, we multiply the previous velocity by 1 - dampingFactor
   var lastAcceleration = [0, 0, 0];
-
-//  var integrator = RK4;
-//  var accelsToSample = 4;
-//  var timestep = 200; // ms
+  var timestep = 50; // ms
 
   var integrator = Euler;
   var accelsToSample = 1;
-  var timestep = 50; // ms
 
   exports.PositionEstimator = {
     // Returns true iff position estimates are available (e.g. we're on a phone)oo
@@ -37,6 +33,18 @@
       return state.vel;
     },
 
+    useRK4: function() {
+      integrator = RK4;
+      accelsToSample = 4;
+      timestep = 200;
+    },
+
+    useEuler: function() {
+      integrator = Euler;
+      accelsToSample = 1;
+      sampledData = [];
+    },
+
     // Returns the last acceleration sampled, relative to the sample taken before it.
     getAcceleration: function() {
       this._startGyro();
@@ -51,8 +59,10 @@
         return;
       }
 
+      this.useRK4();
+
       startedGyro = true;
-      gyro.frequency = timestep / accelsToSample; // The RK4 integrator needs 4 samples for each step, so we'll divide the time step.
+      gyro.frequency = timestep;
       gyro.calibrate();
       gyro.startTracking(this._handleGyroUpdate);
     },
