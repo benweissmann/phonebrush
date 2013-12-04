@@ -8,7 +8,7 @@
   var sampledAccel = [];
   var startedGyro = false;
   var lastAccel = [0, 0, 0];
-  var dampingFactor = 0.1; // Every step, we multiply the previous velocity by 1 - dampingFactor
+  var dampingFactor = 0.004; // Every step, we multiply the previous velocity by 1 - dampingFactor
 
 //  var integrator = RK4;
 //  var accelsToSample = 4;

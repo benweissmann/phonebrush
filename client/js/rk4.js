@@ -15,7 +15,7 @@
 
       return {
         pos: RK4._addArrays([initialState.pos, RK4._scaleArray(dPosDt, timestep)]),
-        vel: RK4._addArrays([RK4._scalearray(initialState.vel, dampingFactor), RK4._scaleArray(dVelDt, timestep)])
+        vel: RK4._addArrays([RK4._scalearray(initialState.vel, 1 - dampingFactor), RK4._scaleArray(dVelDt, timestep)])
       };
     },
 
