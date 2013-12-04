@@ -52,6 +52,10 @@ Meteor.startup(function() {
 
                 nextPointOrder++;
             }
+
+            if(!THREE.touchIsDown) {
+                myLineId = null;
+            }
         }
 
         // handle mouse control interaction
@@ -76,7 +80,7 @@ Meteor.startup(function() {
         try {
           var canvas = document.createElement('canvas');
           supportsWebGL = !!window.WebGLRenderingContext &&
-            (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')); 
+            (canvas.getContext('webgl') || canvas.getContext('experimental-webgl'));
         } catch(e) {}
         // set up renderer
         if(supportsWebGL) {
