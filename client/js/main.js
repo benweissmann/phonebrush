@@ -75,7 +75,7 @@ Meteor.startup(function() {
         var supportsWebGL = false;
         try {
           var canvas = document.createElement('canvas');
-          supportsWebGl = !!window.WebGLRenderingContext &&
+          supportsWebGL = !!window.WebGLRenderingContext &&
             (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')); 
         } catch(e) {}
         // set up renderer
