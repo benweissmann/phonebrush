@@ -77,7 +77,9 @@
         lastUpdateTime = sampledData[sampledData.length - 1].time;
       }
 
-      var newData = {time: new Date().getTime(), acceleration:[event.x - lastAcceleration[0], event.y - lastAcceleration[1], event.z - lastAcceleration[2]]};
+      var differentialAcceleration = [event.x - lastAcceleration[0], event.y - lastAcceleration[1], event.z - lastAcceleration[2]];
+      var filteredAcceleration = MovingFilter.addSample(differentialAcceleration);
+      var newData = {time: new Date().getTime(), acceleration:filteredAcceleration};
       sampledData.push(newData);
 
       if (sampledData.length > accelsToSample) {
