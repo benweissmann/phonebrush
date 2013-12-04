@@ -7,9 +7,13 @@
   };
   var sampledData = [];
   var startedGyro = false;
-  var dampingFactor = 0.02; // Every step, we multiply the previous velocity by 1 - dampingFactor
+  var dampingFactor = 0.1; // Every step, we multiply the previous velocity by 1 - dampingFactor
   var lastAcceleration = [0, 0, 0];
   var timestep = 50; // ms
+
+  var differentialXSamples = [];
+  var filteredXSamples = [];
+  var takeSamples = false;
 
   var integrator = Euler;
   var accelsToSample = 1;
@@ -19,18 +23,6 @@
     isAvailable: function() {
       return true;
       return (gyro.getFeatures().indexOf('devicemotion') != -1) || (gyro.getFeatures().indexOf('MozOrientation') != -1);
-    },
-
-    // Returns the current estimate of [x, y, z] relative to the first
-    // time getPosition was called.
-    getPosition: function() {
-      this._startGyro();
-      return state.pos;
-    },
-
-    getVelocity: function() {
-      this._startGyro();
-      return state.vel;
     },
 
     useRK4: function() {
@@ -45,6 +37,18 @@
       sampledData = [];
     },
 
+    // Returns the current estimate of [x, y, z] relative to the first
+    // time getPosition was called.
+    getPosition: function() {
+      this._startGyro();
+      return state.pos;
+    },
+
+    getVelocity: function() {
+      this._startGyro();
+      return state.vel;
+    },
+
     // Returns the last acceleration sampled, relative to the sample taken before it.
     getAcceleration: function() {
       this._startGyro();
@@ -53,6 +57,28 @@
       }
       return sampledData[sampledData.length - 1].acceleration;
     },
+
+    reset: function() {
+      state = {
+        pos: [0, 0, 0],
+        vel: [0, 0, 0]
+      }
+      sampledData = [];
+      lastAcceleration = [0, 0, 0];
+      gyro.calibrate();
+    },
+
+    stopSamples: function() {
+      takeSamples = false;
+    },
+
+    startSamples: function() {
+      takeSamples = true;
+    },
+
+    differentialXSamples: differentialXSamples,
+
+    filteredXSamples: filteredXSamples,
 
     _startGyro: function() {
       if (startedGyro) {
@@ -78,7 +104,19 @@
       }
 
       var differentialAcceleration = [event.x - lastAcceleration[0], event.y - lastAcceleration[1], event.z - lastAcceleration[2]];
+      differentialAcceleration = _.map(differentialAcceleration, function(point) {
+        if (Math.abs(point) < 0.2) {
+          return 0.0;
+        }
+        return point;
+      });
       var filteredAcceleration = MovingFilter.addSample(differentialAcceleration);
+
+      if (takeSamples) {
+        differentialXSamples.push(differentialAcceleration);
+        filteredXSamples.push(filteredAcceleration);
+      }
+
       var newData = {time: new Date().getTime(), acceleration:filteredAcceleration};
       sampledData.push(newData);
 

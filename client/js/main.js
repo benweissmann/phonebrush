@@ -54,6 +54,7 @@ Meteor.startup(function() {
             }
 
             if(!THREE.touchIsDown) {
+                PositionEstimator.reset();
                 myLineId = null;
             }
         }
