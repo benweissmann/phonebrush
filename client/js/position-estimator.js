@@ -53,16 +53,6 @@
       gyro.frequency = timestep / accelsToSample; // The RK4 integrator needs 4 samples for each step, so we'll divide the time step.
       gyro.calibrate();
       gyro.startTracking(this._handleGyroUpdate);
-
-      window.setTimeout(this._timestep, timestep);
-    },
-
-    _timestep: function() {
-      if (sampledAccel.length >= accelsToSample) {
-        state = integrator.takeStep(state, sampledAccel, timestep / 1000);
-      }
-
-      window.setTimeout(PositionEstimator._timestep, timestep);
     },
 
     _handleGyroUpdate: function(event) {
@@ -71,9 +61,14 @@
       } else {
         sampledAccel.push([event.x, event.y, event.z]);
       }
+
       lastAccel = [event.x, event.y, event.z];
       if (sampledAccel.length > accelsToSample) {
         sampledAccel.shift();
+      }
+
+      if (sampledAccel.length >= accelsToSample) {
+        state = integrator.takeStep(state, sampledAccel, timestep / 1000);
       }
     },
 
