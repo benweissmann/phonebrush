@@ -7,7 +7,8 @@
   };
   var sampledData = [];
   var startedGyro = false;
-  var dampingFactor = 0.004; // Every step, we multiply the previous velocity by 1 - dampingFactor
+  var dampingFactor = 0.02; // Every step, we multiply the previous velocity by 1 - dampingFactor
+  var lastAcceleration = [0, 0, 0];
 
 //  var integrator = RK4;
 //  var accelsToSample = 4;
@@ -57,9 +58,13 @@
     },
 
     _handleGyroUpdate: function(event) {
-      var lastAcceleration = PositionEstimator.getAcceleration();
       if (lastAcceleration[0] == event.x && lastAcceleration[1] == event.y && lastAcceleration[2] == event.z) {
         return;
+      }
+
+      var lastUpdateTime = new Date().getTime();
+      if (sampledData.length > 0) {
+        lastUpdateTime = sampledData[sampledData.length - 1].time;
       }
 
       var newData = {time: new Date().getTime(), acceleration:[event.x - lastAcceleration[0], event.y - lastAcceleration[1], event.z - lastAcceleration[2]]};
@@ -70,8 +75,9 @@
       }
 
       if (sampledData.length >= accelsToSample) {
-        state = integrator.takeStep(state, sampledData, timestep / 1000, dampingFactor);
+        state = integrator.takeStep(state, sampledData, (newData.time - lastUpdateTime) / 1000, dampingFactor);
       }
+      lastAcceleration = [event.x, event.y, event.z];
     },
 
     _override: function(x, y, z) {
