@@ -5,10 +5,10 @@
 
   exports.RK4 = {
     takeStep: function(initialState, sampledAccel, timestep, dampingFactor) {
-      var a = RK4._evaluate(initialState, 0, {dPos:[0,0,0], dVel:[0,0,0]}, sampledAccel[0]);
-      var b = RK4._evaluate(initialState, 0.5 * timestep, a, sampledAccel[1]);
-      var c = RK4._evaluate(initialState, 0.5 * timestep, b, sampledAccel[2]);
-      var d = RK4._evaluate(initialState, timestep, c, sampledAccel[3]);
+      var a = RK4._evaluate(initialState, 0, {dPos:[0,0,0], dVel:[0,0,0]}, sampledAccel[0].acceleration);
+      var b = RK4._evaluate(initialState, 0.5 * timestep, a, sampledAccel[1].acceleration);
+      var c = RK4._evaluate(initialState, 0.5 * timestep, b, sampledAccel[2].acceleration);
+      var d = RK4._evaluate(initialState, timestep, c, sampledAccel[3].acceleration);
 
       var dPosDt = RK4._scaleArray(RK4._addArrays([a.dPos, b.dPos, b.dPos, c.dPos, c.dPos, d.dPos]), 1/6);
       var dVelDt= RK4._scaleArray(RK4._addArrays([a.dVel, b.dVel, b.dVel, c.dVel, c.dVel, d.dVel]), 1/6);

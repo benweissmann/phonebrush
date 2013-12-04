@@ -5,9 +5,8 @@
     pos: [0, 0, 0],
     vel: [0, 0, 0]
   };
-  var sampledAccel = [];
+  var sampledData = [];
   var startedGyro = false;
-  var lastAccel = [0, 0, 0];
   var dampingFactor = 0.004; // Every step, we multiply the previous velocity by 1 - dampingFactor
 
 //  var integrator = RK4;
@@ -40,10 +39,10 @@
     // Returns the last acceleration sampled, relative to the sample taken before it.
     getAcceleration: function() {
       this._startGyro();
-      if (sampledAccel.length == 0) {
+      if (sampledData.length == 0) {
         return [0, 0, 0];
       }
-      return sampledAccel[sampledAccel.length - 1];
+      return sampledData[sampledData.length - 1].acceleration;
     },
 
     _startGyro: function() {
@@ -58,23 +57,20 @@
     },
 
     _handleGyroUpdate: function(event) {
-      if (lastAccel[0] == event.x && lastAccel[1] == event.y && lastAccel[2] == event.z) {
+      var lastAcceleration = PositionEstimator.getAcceleration();
+      if (lastAcceleration[0] == event.x && lastAcceleration[1] == event.y && lastAcceleration[2] == event.z) {
         return;
       }
 
-      if (sampledAccel.length > 0) {
-        sampledAccel.push([event.x - lastAccel[0], event.y - lastAccel[1], event.z - lastAccel[2]]);
-      } else {
-        sampledAccel.push([event.x, event.y, event.z]);
+      var newData = {time: new Date().getTime(), acceleration:[event.x - lastAcceleration[0], event.y - lastAcceleration[1], event.z - lastAcceleration[2]]};
+      sampledData.push(newData);
+
+      if (sampledData.length > accelsToSample) {
+        sampledData.shift();
       }
 
-      lastAccel = [event.x, event.y, event.z];
-      if (sampledAccel.length > accelsToSample) {
-        sampledAccel.shift();
-      }
-
-      if (sampledAccel.length >= accelsToSample) {
-        state = integrator.takeStep(state, sampledAccel, timestep / 1000, dampingFactor);
+      if (sampledData.length >= accelsToSample) {
+        state = integrator.takeStep(state, sampledData, timestep / 1000, dampingFactor);
       }
     },
 
