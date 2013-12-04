@@ -13,7 +13,7 @@
 
       var weightedAverage = [0, 0, 0];
       for (var i = 0; i < samples.length; i++) {
-        weightedAverage = RK4._addArrays([weightedAverage, RK4._scaleArray(samples[i], weightingCoefficients[i])]);
+        weightedAverage = ArrayUtils.add([weightedAverage, ArrayUtils.scale(samples[i], weightingCoefficients[i])]);
       }
       
       return weightedAverage;

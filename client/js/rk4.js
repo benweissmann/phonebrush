@@ -10,19 +10,19 @@
       var c = RK4._evaluate(initialState, 0.5 * timestep, b, sampledAccel[2].acceleration);
       var d = RK4._evaluate(initialState, timestep, c, sampledAccel[3].acceleration);
 
-      var dPosDt = RK4._scaleArray(RK4._addArrays([a.dPos, b.dPos, b.dPos, c.dPos, c.dPos, d.dPos]), 1/6);
-      var dVelDt= RK4._scaleArray(RK4._addArrays([a.dVel, b.dVel, b.dVel, c.dVel, c.dVel, d.dVel]), 1/6);
+      var dPosDt = ArrayUtils.scale(ArrayUtils.add([a.dPos, b.dPos, b.dPos, c.dPos, c.dPos, d.dPos]), 1/6);
+      var dVelDt= ArrayUtils.scale(ArrayUtils.add([a.dVel, b.dVel, b.dVel, c.dVel, c.dVel, d.dVel]), 1/6);
 
       return {
-        pos: RK4._addArrays([initialState.pos, RK4._scaleArray(dPosDt, timestep)]),
-        vel: RK4._addArrays([RK4._scaleArray(initialState.vel, 1 - dampingFactor), RK4._scaleArray(dVelDt, timestep)])
+        pos: ArrayUtils.add([initialState.pos, ArrayUtils.scale(dPosDt, timestep)]),
+        vel: ArrayUtils.add([ArrayUtils.scale(initialState.vel, 1 - dampingFactor), ArrayUtils.scale(dVelDt, timestep)])
       };
     },
 
     _evaluate: function(state, timestep, derivative, acceleration) {
       var newState = {
-        pos: RK4._addArrays([state.pos, RK4._scaleArray(derivative.dPos, timestep)]),
-        vel: RK4._addArrays([state.vel, RK4._scaleArray(derivative.dVel, timestep)])
+        pos: ArrayUtils.add([state.pos, ArrayUtils.scale(derivative.dPos, timestep)]),
+        vel: ArrayUtils.add([state.vel, ArrayUtils.scale(derivative.dVel, timestep)])
       };
 
       return {
@@ -30,32 +30,5 @@
         dVel: acceleration
       };
     },
-
-    // TODO: For some reason, arguments isn't a list of the arguments passed to this function. So we encase our variable args in another array...
-    _addArrays: function(arrays) {
-      for (var i = 1; i < arrays.length; i++) {
-        if (arrays[0].length != arrays[i].length) {
-          console.log("WARNING: Trying to add arrays of unequal length.");
-          return [];
-        }
-      }
-
-      var out = [];
-      for (var i = 0; i < arrays[0].length; i ++) {
-        out.push(0)
-        _.each(arrays, function(array) {
-          out[i] += array[i];
-        });
-      }
-      return out;
-    },
-
-    _scaleArray: function(array, scale) {
-      var out = [];
-      _.each(array, function(val) {
-        out.push(val * scale);
-      });
-      return out;
-    }
   };
 })(this);

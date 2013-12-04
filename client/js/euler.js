@@ -4,8 +4,8 @@
   exports.Euler = {
     takeStep: function(initialState, sampledAccel, timestep, dampingFactor) {
       return {
-        pos: RK4._addArrays([initialState.pos, RK4._scaleArray(initialState.vel, timestep)]),
-        vel: RK4._addArrays([RK4._scaleArray(initialState.vel, 1 - dampingFactor), RK4._scaleArray(sampledAccel[0].acceleration, timestep)])
+        pos: ArrayUtils.add([initialState.pos, ArrayUtils.scale(initialState.vel, timestep)]),
+        vel: ArrayUtils.add([ArrayUtils.scale(initialState.vel, 1 - dampingFactor), ArrayUtils.scale(sampledAccel[0].acceleration, timestep)])
       };
     }
   };
