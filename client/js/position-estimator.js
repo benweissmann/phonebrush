@@ -7,15 +7,16 @@
   };
   var sampledAccel = [];
   var startedGyro = false;
-  var timestep = 200; // ms
   var lastAccel = [0, 0, 0];
   var dampingFactor = 0.1; // Every step, we multiply the previous velocity by 1 - dampingFactor
 
 //  var integrator = RK4;
 //  var accelsToSample = 4;
+//  var timestep = 200; // ms
 
   var integrator = Euler;
   var accelsToSample = 1;
+  var timestep = 50; // ms
 
   exports.PositionEstimator = {
     // Returns true iff position estimates are available (e.g. we're on a phone)oo
@@ -57,6 +58,10 @@
     },
 
     _handleGyroUpdate: function(event) {
+      if (lastAccel[0] == event.x && lastAccel[1] == event.y && lastAccel[2] == event.z) {
+        return;
+      }
+
       if (sampledAccel.length > 0) {
         sampledAccel.push([event.x - lastAccel[0], event.y - lastAccel[1], event.z - lastAccel[2]]);
       } else {
