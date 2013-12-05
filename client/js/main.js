@@ -14,6 +14,11 @@ Meteor.startup(function() {
     var myLineId = null;
     var nextPointOrder = 0;
 
+    var shouldDraw = !window.mobilecheck();
+
+    var isAlternateClient = false;
+
+
     function main() {
         // get new position estimate
 
@@ -42,9 +47,14 @@ Meteor.startup(function() {
                     });
                 }
 
+                var offset = 0;
+                if (isAlternateClient) {
+                  offset = 250;
+                }
+
                 Points.insert({
                     line: myLineId,
-                    x: pos[0]*500,
+                    x: pos[0]*500 - offset,
                     y: pos[1]*500,
                     z: pos[2]*500,
                     order: nextPointOrder
@@ -92,6 +102,7 @@ Meteor.startup(function() {
         }
         renderer.setSize( window.innerWidth, window.innerHeight );
         renderer.setClearColorHex( 0x000000, 1 );
+        isAlternateClient = supportsWebGL && !shouldDraw;
 
         document.getElementById("viewer").appendChild( renderer.domElement );
 
@@ -167,7 +178,7 @@ Meteor.startup(function() {
     }
 
     function update() {
-        if(renderNeeded) {
+        if(renderNeeded && shouldDraw) {
             renderer.render( scene, camera );
             renderNeeded = false;
         }

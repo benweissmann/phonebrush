@@ -58,7 +58,6 @@
             var vertex = new THREE.Vector3(x, y, z);
 
             if(bufferEnd === -1) {
-                console.log("First: ", bufferEnd);
                 // special case first vertex
                 geometry.vertices[0] = vertex;
                 geometry.vertices[1] = vertex;

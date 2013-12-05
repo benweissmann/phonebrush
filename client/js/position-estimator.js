@@ -7,9 +7,10 @@
   };
   var sampledData = [];
   var startedGyro = false;
-  var dampingFactor = 0.1; // Every step, we multiply the previous velocity by 1 - dampingFactor
+  var dampingFactor = 0.2; // Every step, we multiply the previous velocity by 1 - dampingFactor
   var lastAcceleration = [0, 0, 0];
   var timestep = 50; // ms
+  var cutoffThreshold = 0.15;
 
   var differentialXSamples = [];
   var filteredXSamples = [];
@@ -28,7 +29,7 @@
     useRK4: function() {
       integrator = RK4;
       accelsToSample = 4;
-      timestep = 200;
+      timestep = 50;
     },
 
     useEuler: function() {
@@ -98,6 +99,7 @@
         return;
       }
 
+
       var lastUpdateTime = new Date().getTime();
       if (sampledData.length > 0) {
         lastUpdateTime = sampledData[sampledData.length - 1].time;
@@ -105,7 +107,7 @@
 
       var differentialAcceleration = [event.x - lastAcceleration[0], event.y - lastAcceleration[1], event.z - lastAcceleration[2]];
       differentialAcceleration = _.map(differentialAcceleration, function(point) {
-        if (Math.abs(point) < 0.2) {
+        if (Math.abs(point) < cutoffThreshold) {
           return 0.0;
         }
         return point;
