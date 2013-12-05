@@ -62,9 +62,13 @@ Meteor.startup(function() {
 
                 nextPointOrder++;
             }
+            
+            if (!THREE.touchIsDown && myLineId != null) {
+                PositionEstimator.reset();
+            }
+
 
             if(!THREE.touchIsDown) {
-                PositionEstimator.reset();
                 myLineId = null;
             }
         }
